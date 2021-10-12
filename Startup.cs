@@ -1,6 +1,8 @@
+using Alexeev74.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -10,10 +12,16 @@ using System.Threading.Tasks;
 
 namespace Alexeev74
 {
+    
+    
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
         public void ConfigureServices(IServiceCollection services)
         {
+            //подключаем конфиг из appsettings.json 
+            Configuration.Bind("Project", new Config());
             //добавляем поддержку контроллеров и представлений (MVC)
             services.AddControllersWithViews()
                 //выставляем совместимость с asp.net core 3.0
@@ -25,9 +33,7 @@ namespace Alexeev74
             //!!! порядок регистрации middleware очень важен
 
             //в процессе разработки нам важно видеть подробную информацию об ошибках
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) {app.UseDeveloperExceptionPage();}
 
             app.UseRouting();
 
